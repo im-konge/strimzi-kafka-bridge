@@ -72,6 +72,8 @@ public class ConsumerTest extends HttpBridgeTestBase {
     @Test
     void createConsumerWrongFormat(VertxTestContext context) throws InterruptedException, TimeoutException, ExecutionException {
 
+        String name = "kafka-consumer-10";
+
         JsonObject consumerJson = new JsonObject()
             .put("name", name)
             .put("format", "foo");
@@ -92,9 +94,6 @@ public class ConsumerTest extends HttpBridgeTestBase {
                 });
 
         create.get(TEST_TIMEOUT, TimeUnit.SECONDS);
-
-        consumerService()
-            .deleteConsumer(context, groupId, name);
 
         context.completeNow();
         assertThat(context.awaitCompletion(TEST_TIMEOUT, TimeUnit.SECONDS), is(true));
@@ -476,7 +475,7 @@ public class ConsumerTest extends HttpBridgeTestBase {
 
     @Test
     void receiveSimpleMessage(VertxTestContext context) throws InterruptedException, ExecutionException, TimeoutException {
-        String topic = "receiveSimpleMessage";
+        String topic = "receiveSimpleMessage-1";
         adminClientFacade.createTopic(topic);
 
         String sentBody = "Simple message";
@@ -788,7 +787,7 @@ public class ConsumerTest extends HttpBridgeTestBase {
 
     @Test
     void receiveSimpleMessageFromPartition(VertxTestContext context) throws InterruptedException, ExecutionException, TimeoutException {
-        String topic = "receiveSimpleMessageFromPartition";
+        String topic = "receiveSimpleMessageFromPartition-1";
         int partition = 1;
 
         adminClientFacade.createTopic(topic, 2, 1);
@@ -1414,6 +1413,7 @@ public class ConsumerTest extends HttpBridgeTestBase {
         assertThat(context.awaitCompletion(TEST_TIMEOUT, TimeUnit.SECONDS), is(true));
     }
 
+    @DisabledIfEnvironmentVariable(named = "EXTERNAL_BRIDGE", matches = "((?i)TRUE(?-i))")
     @Test
     void tryReceiveNotValidJsonMessage(VertxTestContext context) throws InterruptedException, ExecutionException, TimeoutException {
         String topic = "tryReceiveNotValidJsonMessage";
