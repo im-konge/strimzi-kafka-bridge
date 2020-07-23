@@ -93,6 +93,9 @@ public class ConsumerTest extends HttpBridgeTestBase {
 
         create.get(TEST_TIMEOUT, TimeUnit.SECONDS);
 
+        consumerService()
+            .deleteConsumer(context, groupId, name);
+
         context.completeNow();
         assertThat(context.awaitCompletion(TEST_TIMEOUT, TimeUnit.SECONDS), is(true));
     }
@@ -412,9 +415,12 @@ public class ConsumerTest extends HttpBridgeTestBase {
     }
 
     @Test
-    void createConsumerWithForwardedHeaderWrongProto(VertxTestContext context) throws InterruptedException {
+    void createConsumerWithForwardedHeaderWrongProto(VertxTestContext context) throws InterruptedException, TimeoutException, ExecutionException {
         // this test emulates a create consumer request coming from an API gateway/proxy
         String forwarded = "host=my-api-gateway-host;proto=mqtt";
+
+        name = "my-kafka-consumer-1";
+        consumerWithEarliestReset.put("name", name);
 
         consumerService().createConsumerRequest(groupId, consumerWithEarliestResetJson)
                 .putHeader(FORWARDED, forwarded)
@@ -1510,6 +1516,7 @@ public class ConsumerTest extends HttpBridgeTestBase {
         context.completeNow();
     }
 
+    @DisabledIfEnvironmentVariable(named = "EXTERNAL_BRIDGE", matches = "((?i)TRUE(?-i))")
     @Test
     void consumerDeletedAfterInactivity(VertxTestContext context) {
         CompletableFuture<Boolean> create = new CompletableFuture<>();
