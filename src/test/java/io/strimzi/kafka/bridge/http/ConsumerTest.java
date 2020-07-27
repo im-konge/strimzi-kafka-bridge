@@ -20,15 +20,14 @@ import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.BeforeEach;
 import io.vertx.kafka.client.producer.KafkaHeader;
 import io.vertx.kafka.client.producer.impl.KafkaHeaderImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 
 import javax.xml.bind.DatatypeConverter;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -1633,7 +1632,7 @@ public class ConsumerTest extends HttpBridgeTestBase {
     @BeforeEach
     void setUp() {
         name = generateRandomConsumerName();
-        consumerWithEarliestReset.put("name", name);
+        consumerWithEarliestResetJson.put("name", name);
         consumerJson.put("name", name);
     }
 
